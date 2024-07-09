@@ -482,7 +482,7 @@
 					(type background)
 				)
 			)
-			(pin output line
+			(pin bidirectional line
 				(at -12.7 0 0)
 				(length 2.54)
 				(name "SDO"
