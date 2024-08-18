@@ -4,6 +4,12 @@
 	(generator_version "8.0")
 	(uuid "55924447-94dd-4524-a9d3-3f79a9e023c8")
 	(paper "A4")
+	(title_block
+		(title "PY32 POV spinner demo")
+		(date "2024-08-18")
+		(rev "A")
+		(company "ArcaneNibble")
+	)
 	(lib_symbols
 		(symbol "Connector:Conn_ARM_SWD_TagConnect_TC2030"
 			(exclude_from_sim no)
@@ -5190,6 +5196,15 @@
 				(hide yes)
 			)
 		)
+		(property "LCSC" "C2979167"
+			(at 223.52 30.48 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "1"
 			(uuid "69e6e085-bd7b-4291-9fbb-9471542b8331")
 		)
@@ -7092,7 +7107,7 @@
 				(justify left)
 			)
 		)
-		(property "Value" "MountingHole"
+		(property "Value" "608 bearing"
 			(at 129.54 77.4699 0)
 			(effects
 				(font
@@ -8089,7 +8104,7 @@
 		(at 25.4 43.18 0)
 		(unit 1)
 		(exclude_from_sim no)
-		(in_bom yes)
+		(in_bom no)
 		(on_board yes)
 		(dnp no)
 		(fields_autoplaced yes)
@@ -9721,7 +9736,7 @@
 		(at 111.76 60.96 0)
 		(unit 1)
 		(exclude_from_sim no)
-		(in_bom yes)
+		(in_bom no)
 		(on_board yes)
 		(dnp no)
 		(fields_autoplaced yes)
