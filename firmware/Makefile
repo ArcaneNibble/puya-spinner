@@ -6,7 +6,7 @@ CC = arm-none-eabi-gcc
 OBJDUMP = arm-none-eabi-objdump
 OBJCOPY = arm-none-eabi-objcopy
 CFLAGS = -ggdb3 -Os -mcpu=$(ARM_CPU) -ffunction-sections -fdata-sections
-LDFLAGS = -ggdb3 -mcpu=$(ARM_CPU) -Wl,--gc-sections --specs=nosys.specs
+LDFLAGS = -ggdb3 -mcpu=$(ARM_CPU) -Wl,--gc-sections
 
 OBJS = startup.o main.o
 
@@ -20,7 +20,7 @@ main.elf: $(OBJS)
 	$(OBJCOPY) -O binary $< $@
 
 %.elf: linker.lds
-	$(CC) -Xlinker -Map=$(@:.elf=.map) -Wl,--script=linker.lds -nostartfiles -o $@ $(filter-out linker.lds,$+)
+	$(CC) $(LDFLAGS) -Xlinker -Map=$(@:.elf=.map) -Wl,--script=linker.lds -nostartfiles -o $@ $(filter-out linker.lds,$+)
 	$(OBJDUMP) -xdsS $@ >$(@:.elf=.dump)
 
 %.o %.d: %.S
