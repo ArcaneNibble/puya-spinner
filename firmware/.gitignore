@@ -1,0 +1,7 @@
+*.o
+*.elf
+*.bin
+*.map
+*.dump
+*.uf2
+*.d
