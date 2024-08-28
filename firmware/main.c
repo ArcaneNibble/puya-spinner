@@ -102,17 +102,22 @@ void main() {
     // initial read to make sure interrupt pin is cleared
     while (!(GPIOB_IDR & (1 << 3))) {}
     accel_read_multi_reg(0x27, 7, debug_xxxxw);
+
+    /// final interrupt enable
+    NVIC_ISER = 1 << 6;
     
-    int i = 0;
-    while (1) {
-        turn_on_led(i++);
+    while (1)
+        asm volatile("wfi");
+}
 
-        while (!(EXTI_PR & (1 << 3))) {}
-        EXTI_PR = 1 << 3;
-        accel_read_multi_reg(0x27, 7, debug_xxxxw);
+void EXTI2_3_IRQHandler() {
+    static int i = 0;
+    turn_on_led(i++);
 
-        // this is faster, avoids divmod
-        if (i == NUM_LEDS)
-            i = 0;
-    }
+    EXTI_PR = 1 << 3;
+    accel_read_multi_reg(0x27, 7, debug_xxxxw);
+
+    // this is faster, avoids divmod
+    if (i == NUM_LEDS)
+        i = 0;
 }
