@@ -57,6 +57,18 @@
 #define GPIOA_AFRH      (*(volatile uint32_t*)0x50000024)
 #define GPIOA_BRR       (*(volatile uint32_t*)0x50000028)
 
+#define GPIOB_MODER     (*(volatile uint32_t*)0x50000400)
+#define GPIOB_OTYPER    (*(volatile uint32_t*)0x50000404)
+#define GPIOB_OSPEEDR   (*(volatile uint32_t*)0x50000408)
+#define GPIOB_PUPDR     (*(volatile uint32_t*)0x5000040c)
+#define GPIOB_IDR       (*(volatile uint32_t*)0x50000410)
+#define GPIOB_ODR       (*(volatile uint32_t*)0x50000414)
+#define GPIOB_BSRR      (*(volatile uint32_t*)0x50000418)
+#define GPIOB_LCKR      (*(volatile uint32_t*)0x5000041c)
+#define GPIOB_AFRL      (*(volatile uint32_t*)0x50000420)
+#define GPIOB_AFRH      (*(volatile uint32_t*)0x50000424)
+#define GPIOB_BRR       (*(volatile uint32_t*)0x50000428)
+
 #define GPIOF_MODER     (*(volatile uint32_t*)0x50001400)
 #define GPIOF_OTYPER    (*(volatile uint32_t*)0x50001404)
 #define GPIOF_OSPEEDR   (*(volatile uint32_t*)0x50001408)

@@ -65,8 +65,8 @@ void main() {
     /// 24 MHz HSI
     RCC_ICSCR = RCC_ICSCR & 0xffff0000 | (4 << 13) | CAL_HSI_24M;
 
-    /// GPIO setup
-    RCC_IOPENR = 0b100001;
+    /// GPIO power on
+    RCC_IOPENR = 0b100011;
 
     /// I2C setup
     RCC_APBENR1 |= (1 << 21);
@@ -83,6 +83,7 @@ void main() {
     GPIOF_AFRL = 0xcc;
     GPIOF_MODER = (GPIOF_MODER & ~0b1111) | 0b1010;
 
+    /// Accel setup
     debug_accel_whoami = accel_read_reg(0x0f);
     accel_write_reg(0x20, 0b01110111);
     accel_write_reg(0x21, 0b00000000);
@@ -91,12 +92,18 @@ void main() {
     accel_write_reg(0x24, 0b00000000);
     accel_write_reg(0x25, 0b00000000);
     accel_read_multi_reg(0x20, 6, debug_accel_ctrl_readback);
-    accel_read_multi_reg(0x27, 7, debug_xxxxw);
+
+    /// PB3 = accel interrupt
+    GPIOB_MODER &= ~(0b11 << 6);
     
     int i = 0;
     while (1) {
         turn_on_led(i++);
-        for (int j = 0; j < 500000; j++) asm volatile("");
+        // for (int j = 0; j < 500000; j++) asm volatile("");
+
+        while (!(GPIOB_IDR & 0b1000)) {}
+        accel_read_multi_reg(0x27, 7, debug_xxxxw);
+
         // this is faster, avoids divmod
         if (i == NUM_LEDS)
             i = 0;
