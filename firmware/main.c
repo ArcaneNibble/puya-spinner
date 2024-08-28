@@ -61,7 +61,8 @@ void turn_on_led(int led) {
 uint8_t debug_accel_whoami;
 uint8_t debug_xxxxx[6];
 uint8_t debug_xxxxy[6];
-uint8_t debug_xxxxz[7];
+uint8_t debug_xxxxz[6];
+uint8_t debug_xxxxw[7];
 void main() {
     /// 24 MHz HSI
     RCC_ICSCR = RCC_ICSCR & 0xffff0000 | (4 << 13) | CAL_HSI_24M;
@@ -71,8 +72,8 @@ void main() {
 
     /// I2C setup
     RCC_APBENR1 |= (1 << 21);
-    // 24 MHz system clock, interrupts enable
-    I2C_CR2 = (0b111 << 8) | 24;
+    // 24 MHz system clock
+    I2C_CR2 = 24;
     // 400 kHz I2C
     I2C_CCR = (1 << 15) | 20;
     I2C_TRISE = 8;
@@ -83,14 +84,16 @@ void main() {
     GPIOF_OSPEEDR = 0b1010;
     GPIOF_AFRL = 0xcc;
     GPIOF_MODER = (GPIOF_MODER & ~0b1111) | 0b1010;
-    // interrupt
-    NVIC_ISER = 1 << 23;
 
-    accel_write_reg(0x20, 0b01110111);
     debug_accel_whoami = accel_read_reg(0x0f);
     // accel_read_multi_reg(0x20, 6, debug_xxxxx);
-    // accel_read_multi_reg(0x20, 6, debug_xxxxy);
-    // accel_read_multi_reg(0x27, 7, debug_xxxxz);
+    for (int i = 0; i < 6; i++)
+        debug_xxxxx[i] = accel_read_reg(0x20 + i);
+    accel_write_reg(0x20, 0b01110111);
+    for (int i = 0; i < 6; i++)
+        debug_xxxxy[i] = accel_read_reg(0x20 + i);
+    accel_read_multi_reg(0x20, 6, debug_xxxxz);
+    accel_read_multi_reg(0x27, 7, debug_xxxxw);
     
     int i = 0;
     while (1) {
