@@ -60,7 +60,8 @@ void turn_on_led(int led) {
 
 uint8_t debug_accel_whoami;
 uint8_t debug_xxxxx[6];
-uint8_t debug_xxxxy[7];
+uint8_t debug_xxxxy[6];
+uint8_t debug_xxxxz[7];
 void main() {
     /// 24 MHz HSI
     RCC_ICSCR = RCC_ICSCR & 0xffff0000 | (4 << 13) | CAL_HSI_24M;
@@ -85,9 +86,11 @@ void main() {
     // interrupt
     NVIC_ISER = 1 << 23;
 
+    accel_write_reg(0x20, 0b01110111);
     debug_accel_whoami = accel_read_reg(0x0f);
-    accel_read_multi_reg(0x20, 6, debug_xxxxx);
-    accel_read_multi_reg(0x27, 7, debug_xxxxy);
+    // accel_read_multi_reg(0x20, 6, debug_xxxxx);
+    // accel_read_multi_reg(0x20, 6, debug_xxxxy);
+    // accel_read_multi_reg(0x27, 7, debug_xxxxz);
     
     int i = 0;
     while (1) {
