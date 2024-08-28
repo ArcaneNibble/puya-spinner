@@ -95,13 +95,20 @@ void main() {
 
     /// PB3 = accel interrupt
     GPIOB_MODER &= ~(0b11 << 6);
+    EXTI_EXTICR1 = 0b01 << 24;
+    EXTI_RTSR = 1 << 3;
+    EXTI_IMR |= 1 << 3;
+
+    // initial read to make sure interrupt pin is cleared
+    while (!(GPIOB_IDR & (1 << 3))) {}
+    accel_read_multi_reg(0x27, 7, debug_xxxxw);
     
     int i = 0;
     while (1) {
         turn_on_led(i++);
-        // for (int j = 0; j < 500000; j++) asm volatile("");
 
-        while (!(GPIOB_IDR & 0b1000)) {}
+        while (!(EXTI_PR & (1 << 3))) {}
+        EXTI_PR = 1 << 3;
         accel_read_multi_reg(0x27, 7, debug_xxxxw);
 
         // this is faster, avoids divmod

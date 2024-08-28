@@ -45,6 +45,16 @@
 #define RCC_APBENR1     (*(volatile uint32_t*)0x4002103c)
 #define RCC_APBENR2     (*(volatile uint32_t*)0x40021040)
 
+#define EXTI_RTSR       (*(volatile uint32_t*)0x40021800)
+#define EXTI_FTSR       (*(volatile uint32_t*)0x40021804)
+#define EXTI_SWIER      (*(volatile uint32_t*)0x40021808)
+#define EXTI_PR         (*(volatile uint32_t*)0x4002180c)
+#define EXTI_EXTICR1    (*(volatile uint32_t*)0x40021860)
+#define EXTI_EXTICR2    (*(volatile uint32_t*)0x40021864)
+#define EXTI_EXTICR3    (*(volatile uint32_t*)0x40021868)
+#define EXTI_IMR        (*(volatile uint32_t*)0x40021880)
+#define EXTI_EMR        (*(volatile uint32_t*)0x40021884)
+
 #define GPIOA_MODER     (*(volatile uint32_t*)0x50000000)
 #define GPIOA_OTYPER    (*(volatile uint32_t*)0x50000004)
 #define GPIOA_OSPEEDR   (*(volatile uint32_t*)0x50000008)
