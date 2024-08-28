@@ -56,19 +56,71 @@ void turn_on_led(int led) {
     set_lo(led_pins[led * 2 + 1]);
 }
 
+uint8_t i2c_read_one_reg(uint8_t addr, uint8_t reg) {
+    uint16_t sr1;
+
+    // start
+    I2C_CR1 |= (1 << 8);
+    while (!((sr1 = I2C_SR1) & (1 << 0))) {}
+
+    // addr
+    I2C_DR = addr << 1;
+    while (!((sr1 = I2C_SR1) & (1 << 1))) {}
+    I2C_SR2;
+
+    // reg
+    I2C_DR = reg;
+    while (!((sr1 = I2C_SR1) & (1 << 2))) {}
+
+
+    // start
+    I2C_CR1 |= (1 << 8);
+    while (!((sr1 = I2C_SR1) & (1 << 0))) {}
+
+    // addr
+    I2C_DR = (addr << 1) | 1;
+    while (!((sr1 = I2C_SR1) & (1 << 1))) {}
+    I2C_CR1 &= ~(1 << 10);
+    I2C_SR2;
+
+    // stop
+    I2C_CR1 |= (1 << 9);
+    while (!((sr1 = I2C_SR1) & (1 << 6))) {}
+    return I2C_DR;
+}
+
+uint8_t debug_accel_whoami;
 void main() {
     /// 24 MHz HSI
     RCC_ICSCR = RCC_ICSCR & 0xffff0000 | (4 << 13) | CAL_HSI_24M;
 
     /// GPIO setup
-    RCC_IOPENR = 1;
+    RCC_IOPENR = 0b100001;
+
+    /// I2C setup
+    RCC_APBENR1 |= (1 << 21);
+    // 24 MHz system clock
+    I2C_CR2 = 24;
+    // 400 kHz I2C
+    I2C_CCR = (1 << 15) | 20;
+    I2C_TRISE = 8;
+    // enable
+    I2C_CR1 = 1;
+    // gpio
+    GPIOF_OTYPER = 0b11;
+    GPIOF_OSPEEDR = 0b1010;
+    GPIOF_AFRL = 0xcc;
+    GPIOF_MODER = (GPIOF_MODER & ~0b1111) | 0b1010;
+
+    debug_accel_whoami = i2c_read_one_reg(0x18, 0x0f);
+    while (1) {}
     
-    int i = 0;
-    while (1) {
-        turn_on_led(i++);
-        for (int j = 0; j < 500000; j++) asm volatile("");
-        // this is faster, avoids divmod
-        if (i == NUM_LEDS)
-            i = 0;
-    }
+    // int i = 0;
+    // while (1) {
+    //     turn_on_led(i++);
+    //     for (int j = 0; j < 500000; j++) asm volatile("");
+    //     // this is faster, avoids divmod
+    //     if (i == NUM_LEDS)
+    //         i = 0;
+    // }
 }
