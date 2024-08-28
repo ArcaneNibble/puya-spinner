@@ -2,10 +2,12 @@
 #include "accel.h"
 #include "led.h"
 
-
 uint8_t debug_accel_whoami;
 uint8_t debug_accel_ctrl_readback[6];
-uint8_t debug_xxxxw[7];
+#define DEBUG_BUF_NENTS     1500
+int16_t debug_accel_buffer[DEBUG_BUF_NENTS];
+uint32_t debug_accel_buffer_idx;
+
 void main() {
     /// 24 MHz HSI
     RCC_ICSCR = RCC_ICSCR & 0xffff0000 | (4 << 13) | CAL_HSI_24M;
@@ -46,7 +48,8 @@ void main() {
 
     // initial read to make sure interrupt pin is cleared
     while (!(GPIOB_IDR & (1 << 3))) {}
-    accel_read_multi_reg(0x27, 7, debug_xxxxw);
+    uint8_t dummy_accel_buf[7];
+    accel_read_multi_reg(0x27, 7, dummy_accel_buf);
 
     /// final interrupt enable
     NVIC_ISER = 1 << 6;
@@ -56,12 +59,22 @@ void main() {
 }
 
 void EXTI2_3_IRQHandler() {
+    EXTI_PR = 1 << 3;
+    uint8_t accel_buf[7];
+    accel_read_multi_reg(0x27, 7, accel_buf);
+
+    int16_t x = accel_buf[1] | (accel_buf[2] << 8);
+    int16_t y = accel_buf[3] | (accel_buf[4] << 8);
+    int16_t z = accel_buf[5] | (accel_buf[6] << 8);
+
+    debug_accel_buffer[debug_accel_buffer_idx++] = x;
+    debug_accel_buffer[debug_accel_buffer_idx++] = y;
+    debug_accel_buffer[debug_accel_buffer_idx++] = z;
+    if (debug_accel_buffer_idx == DEBUG_BUF_NENTS)
+        debug_accel_buffer_idx = 0;
+
     static int i = 0;
     turn_on_led(i++);
-
-    EXTI_PR = 1 << 3;
-    accel_read_multi_reg(0x27, 7, debug_xxxxw);
-
     // this is faster, avoids divmod
     if (i == NUM_LEDS)
         i = 0;
