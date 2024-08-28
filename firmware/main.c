@@ -5,7 +5,7 @@
 
 uint8_t debug_accel_whoami;
 uint8_t debug_accel_ctrl_readback[6];
-#define DEBUG_BUF_NENTS     1500
+#define DEBUG_BUF_NENTS     1200
 int16_t debug_accel_buffer[DEBUG_BUF_NENTS];
 uint32_t debug_accel_buffer_idx;
 
@@ -41,11 +41,22 @@ void main() {
     accel_write_reg(0x25, 0b00000000);
     accel_read_multi_reg(0x20, 6, debug_accel_ctrl_readback);
 
+    /// xxx dummy data
+    for (int i = 0; i < NUM_SECTORS; i++) {
+        led_data[i] = (1 << (i % (NUM_LEDS + 1))) - 1;
+    }
+
+    /// systick setup, 24 kHz = 30 LEDs * 400 Hz * 2x doubling
+    SYST_CVR = 0;
+    SYST_RVR = 999;
+    SYST_CSR = 0b111;
+
     /// PB3 = accel interrupt
     GPIOB_MODER &= ~(0b11 << 6);
     EXTI_EXTICR1 = 0b01 << 24;
     EXTI_RTSR = 1 << 3;
     EXTI_IMR |= 1 << 3;
+    NVIC_IPR1 = 0xc0 << 16;     // lower prio than led
 
     // initial read to make sure interrupt pin is cleared
     while (!(GPIOB_IDR & (1 << 3))) {}
@@ -76,10 +87,9 @@ void EXTI2_3_IRQHandler() {
 
     // maths!
     float angle = atan2f(-y, x);
-
-    float xxx_led_f = angle * 15.0f / (float)(M_PI);
-    int xxx_led = floorf(xxx_led_f);
-    if (xxx_led < 0)
-        xxx_led += 30;
-    turn_on_led(xxx_led);
+    float led_sector_f = angle * ((float)(NUM_SECTORS / 2) / (float)(M_PI));
+    int led_sector = floorf(led_sector_f);
+    if (led_sector < 0)
+        led_sector += NUM_SECTORS;
+    led_current_sector = led_sector;
 }

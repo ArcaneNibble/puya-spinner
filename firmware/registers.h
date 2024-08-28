@@ -91,6 +91,11 @@
 #define GPIOF_AFRH      (*(volatile uint32_t*)0x50001424)
 #define GPIOF_BRR       (*(volatile uint32_t*)0x50001428)
 
+#define SYST_CSR        (*(volatile uint32_t*)0xe000e010)
+#define SYST_RVR        (*(volatile uint32_t*)0xe000e014)
+#define SYST_CVR        (*(volatile uint32_t*)0xe000e018)
+#define SYST_CALIB      (*(volatile uint32_t*)0xe000e01c)
+
 #define NVIC_ISER       (*(volatile uint32_t*)0xe000e100)
 #define NVIC_ICER       (*(volatile uint32_t*)0xe000e180)
 #define NVIC_ISPR       (*(volatile uint32_t*)0xe000e200)
@@ -103,3 +108,11 @@
 #define NVIC_IPR5       (*(volatile uint32_t*)0xe000e414)
 #define NVIC_IPR6       (*(volatile uint32_t*)0xe000e418)
 #define NVIC_IPR7       (*(volatile uint32_t*)0xe000e41c)
+
+#define SCB_CPUID       (*(volatile uint32_t*)0xe000ed00)
+#define SCB_ICSR        (*(volatile uint32_t*)0xe000ed04)
+#define SCB_AIRCR       (*(volatile uint32_t*)0xe000ed0c)
+#define SCB_SCR         (*(volatile uint32_t*)0xe000ed10)
+#define SCB_CCR         (*(volatile uint32_t*)0xe000ed14)
+#define SCB_SHPR2       (*(volatile uint32_t*)0xe000ed1c)
+#define SCB_SHPR3       (*(volatile uint32_t*)0xe000ed20)
