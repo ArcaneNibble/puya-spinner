@@ -1,6 +1,7 @@
 #include "registers.h"
 #include "accel.h"
 #include "led.h"
+#include <math.h>
 
 uint8_t debug_accel_whoami;
 uint8_t debug_accel_ctrl_readback[6];
@@ -73,9 +74,12 @@ void EXTI2_3_IRQHandler() {
     if (debug_accel_buffer_idx == DEBUG_BUF_NENTS)
         debug_accel_buffer_idx = 0;
 
-    static int i = 0;
-    turn_on_led(i++);
-    // this is faster, avoids divmod
-    if (i == NUM_LEDS)
-        i = 0;
+    // maths!
+    float angle = atan2f(-y, x);
+
+    float xxx_led_f = angle * 15.0f / (float)(M_PI);
+    int xxx_led = floorf(xxx_led_f);
+    if (xxx_led < 0)
+        xxx_led += 30;
+    turn_on_led(xxx_led);
 }
