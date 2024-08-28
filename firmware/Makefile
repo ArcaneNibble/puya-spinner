@@ -8,7 +8,7 @@ OBJCOPY = arm-none-eabi-objcopy
 CFLAGS = -ggdb3 -Os -mcpu=$(ARM_CPU) -ffunction-sections -fdata-sections
 LDFLAGS = -ggdb3 -mcpu=$(ARM_CPU) -Wl,--gc-sections
 
-OBJS = startup.o main.o accel.o
+OBJS = startup.o main.o accel.o led.o
 
 all: main.elf main.bin
 
