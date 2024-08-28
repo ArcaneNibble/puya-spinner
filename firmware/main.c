@@ -59,9 +59,7 @@ void turn_on_led(int led) {
 
 
 uint8_t debug_accel_whoami;
-uint8_t debug_xxxxx[6];
-uint8_t debug_xxxxy[6];
-uint8_t debug_xxxxz[6];
+uint8_t debug_accel_ctrl_readback[6];
 uint8_t debug_xxxxw[7];
 void main() {
     /// 24 MHz HSI
@@ -86,13 +84,13 @@ void main() {
     GPIOF_MODER = (GPIOF_MODER & ~0b1111) | 0b1010;
 
     debug_accel_whoami = accel_read_reg(0x0f);
-    // accel_read_multi_reg(0x20, 6, debug_xxxxx);
-    for (int i = 0; i < 6; i++)
-        debug_xxxxx[i] = accel_read_reg(0x20 + i);
     accel_write_reg(0x20, 0b01110111);
-    for (int i = 0; i < 6; i++)
-        debug_xxxxy[i] = accel_read_reg(0x20 + i);
-    accel_read_multi_reg(0x20, 6, debug_xxxxz);
+    accel_write_reg(0x21, 0b00000000);
+    accel_write_reg(0x22, 0b00010000);
+    accel_write_reg(0x23, 0b00001000);
+    accel_write_reg(0x24, 0b00000000);
+    accel_write_reg(0x25, 0b00000000);
+    accel_read_multi_reg(0x20, 6, debug_accel_ctrl_readback);
     accel_read_multi_reg(0x27, 7, debug_xxxxw);
     
     int i = 0;
